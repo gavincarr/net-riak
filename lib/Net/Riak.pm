@@ -3,32 +3,29 @@ package Net::Riak;
 # ABSTRACT: Interface to Riak
 
 use Moose;
-use MIME::Base64;
 
+use Net::Riak::Client;
 use Net::Riak::Bucket;
-use Net::Riak::MapReduce;
 
-with qw/
-  Net::Riak::Role::REST
-  Net::Riak::Role::UserAgent
-  /;
+with 'Net::Riak::Role::MapReduce';
 
-has host =>
-  (is => 'rw', isa => 'Str', coerce => 1, default => 'http://127.0.0.1:8098');
-has prefix        => (is => 'rw', isa => 'Str', default    => 'riak');
-has mapred_prefix => (is => 'rw', isa => 'Str', default    => 'mapred');
-has r             => (is => 'rw', isa => 'Int', default    => 2);
-has w             => (is => 'rw', isa => 'Int', default    => 2);
-has dw            => (is => 'rw', isa => 'Int', default    => 2);
-has client_id     => (is => 'rw', isa => 'Str', lazy_build => 1,);
+has client => (
+    is       => 'rw',
+    isa      => 'Net::Riak::Client',
+    required => 1,
+    handles  => [qw/request useragent/]
+);
 
-sub _build_client_id {
-    "perl_net_riak" . encode_base64(int(rand(10737411824)), '');
+sub BUILDARGS {
+    my ($class, %args) = @_;
+    my $client = Net::Riak::Client->new(%args);
+    $args{client} = $client;
+    \%args;
 }
 
 sub bucket {
     my ($self, $name) = @_;
-    my $bucket = Net::Riak::Bucket->new(name => $name, client => $self);
+    my $bucket = Net::Riak::Bucket->new(name => $name, client => $self->client);
     $bucket;
 }
 
@@ -37,34 +34,6 @@ sub is_alive {
     my $request  = $self->request('GET', ['ping']);
     my $response = $self->useragent->request($request);
     $response->is_success ? return 1 : return 0;
-}
-
-sub add {
-    my ($self, @args) = @_;
-    my $mr = Net::Riak::MapReduce->new(client => $self);
-    $mr->add(@args);
-    $mr;
-}
-
-sub link {
-    my ($self, @args) = @_;
-    my $mr = Net::Riak::MapReduce->new(client => $self);
-    $mr->link(@args);
-    $mr;
-}
-
-sub map {
-    my ($self, @args) = @_;
-    my $mr = Net::Riak::MapReduce->new(client => $self);
-    $mr->mapd(@args);
-    $mr;
-}
-
-sub reduce {
-    my ($self, @args) = @_;
-    my $mr = Net::Riak::MapReduce->new(client => $self);
-    $mr->reduce(@args);
-    $mr;
 }
 
 1;
