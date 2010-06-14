@@ -1,2 +1,9 @@
+0.02 Mon 14 Jun 2010 03:48:43 PM CEST  
+    - links_to_header is now private
+    - add some handles
+    - client is moved to a class
+    - client is now a N::R::Client
+    - add tests for bucket, client, object, links
+
 0.01 Mon 14 Jun 2010 01:08:52 PM CEST  
     - initial release (port of the python client)
