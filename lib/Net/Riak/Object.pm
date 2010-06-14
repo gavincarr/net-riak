@@ -295,7 +295,7 @@ sub add_link {
 sub remove_link {
     my ($self, $obj, $tag) = @_;
     my $new_link;
-    if (blessed $obj && $obj->isa('RiakLink')) {
+    if (blessed $obj && $obj->isa('Net::Riak::Link')) {
         $new_link = $obj;
     }
     else {
