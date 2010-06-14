@@ -126,7 +126,7 @@ sub store {
     }
 
     if ($self->count_links > 0) {
-        $request->header('link' => $self->links_to_header);
+        $request->header('link' => $self->_links_to_header);
     }
 
     if ($self->_jsonize) {
@@ -141,7 +141,7 @@ sub store {
     $self;
 }
 
-sub links_to_header {
+sub _links_to_header {
     my $self        = shift;
     my $header_link = '';
     foreach my $l ($self->links) {
