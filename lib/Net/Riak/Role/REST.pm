@@ -23,7 +23,7 @@ sub _build_uri {
 sub request {
     my ($self, $method, $path, $params) = @_;
     my $uri = $self->_build_uri($path, $params);
-    my $request = HTTP::Request->new($method => $uri);
+    HTTP::Request->new($method => $uri);
 }
 
 1;
