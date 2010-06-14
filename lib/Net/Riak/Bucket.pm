@@ -53,6 +53,7 @@ sub n_val {
 
 sub allow_multiples {
     my $self = shift;
+    # XXX use JSON::false / true ?
     if (my $val = shift) {
         $self->set_property('allow_mult', $val);
     }
@@ -128,6 +129,7 @@ sub new_object {
         bucket => $self,
         client => $self->client
     );
+    $object;
 }
 
 1;
