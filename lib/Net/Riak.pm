@@ -13,7 +13,7 @@ has client => (
     is       => 'rw',
     isa      => 'Net::Riak::Client',
     required => 1,
-    handles  => [qw/request useragent/]
+    handles  => [qw/request useragent is_alive/]
 );
 
 sub BUILDARGS {
@@ -27,13 +27,6 @@ sub bucket {
     my ($self, $name) = @_;
     my $bucket = Net::Riak::Bucket->new(name => $name, client => $self->client);
     $bucket;
-}
-
-sub is_alive {
-    my $self     = shift;
-    my $request  = $self->request('GET', ['ping']);
-    my $response = $self->useragent->request($request);
-    $response->is_success ? return 1 : return 0;
 }
 
 1;

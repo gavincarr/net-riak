@@ -20,17 +20,7 @@ has mapred_prefix => (
     isa     => 'Str',
     default => 'mapred'
 );
-has r => (
-    is      => 'rw',
-    isa     => 'Int',
-    default => 2
-);
-has w => (
-    is      => 'rw',
-    isa     => 'Int',
-    default => 2
-);
-has dw => (
+has [qw/r w dw/] => (
     is      => 'rw',
     isa     => 'Int',
     default => 2
@@ -43,6 +33,13 @@ has client_id => (
 
 sub _build_client_id {
     "perl_net_riak" . encode_base64(int(rand(10737411824)), '');
+}
+
+sub is_alive {
+    my $self     = shift;
+    my $request  = $self->request('GET', ['ping']);
+    my $response = $self->useragent->request($request);
+    $response->is_success ? return 1 : return 0;
 }
 
 1;
