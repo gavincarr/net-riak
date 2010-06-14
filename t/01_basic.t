@@ -4,7 +4,12 @@ use Test::More;
 use Net::Riak;
 use YAML::Syck;
 
-
+BEGIN {
+  unless ($ENV{RELEASE_TESTING}) {
+    require Test::More;
+    Test::More::plan(skip_all => 'these tests are for release candidate testing');
+  }
+}
 
 my $host = 'http://localhost:8098';
 my $bucket_name = 'test4';
