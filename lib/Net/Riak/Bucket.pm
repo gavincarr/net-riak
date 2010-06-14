@@ -148,6 +148,8 @@ The L<Net::Riak::Bucket> object allows you to access and change information abou
 
 =head2 ATTRIBUTES
 
+=over 4
+
 =item B<name>
 
     my $name = $bucket->name;
@@ -171,6 +173,8 @@ W value setting for this client (default 2)
     my $dw_value = $bucket->dw;
 
 DW value setting for this client (default 2)
+
+=back
 
 =head2 METHODS
 
