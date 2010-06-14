@@ -136,25 +136,39 @@ sub new_object {
 
 =head1 SYNOPSIS
 
-The L<Net::Riak::Bucket> object allows you to access and change information about a Riak bucket, and provides methods to create or retrieve objects within the bucket.
+    my $client = Net::Riak->new(...);
+    my $bucket = $client->bucket('foo');
+    my $object = $bucket->new_object('foo', {...});
+    $object->store;
+    $object->get('foo2');
 
 =head1 DESCRIPTION
+
+The L<Net::Riak::Bucket> object allows you to access and change information about a Riak bucket, and provides methods to create or retrieve objects within the bucket.
 
 =head2 ATTRIBUTES
 
 =item B<name>
 
+    my $name = $bucket->name;
+
 Get the bucket name
 
 =item B<r>
+
+    my $r_value = $bucket->r;
 
 R value setting for this client (default 2)
 
 =item B<w>
 
+    my $w_value = $bucket->w;
+
 W value setting for this client (default 2)
 
 =item B<dw>
+
+    my $dw_value = $bucket->dw;
 
 DW value setting for this client (default 2)
 
@@ -162,25 +176,37 @@ DW value setting for this client (default 2)
 
 =method new_object
 
+    my $obj = $bucket->new_object($key, $data);
+
 Create a new L<Net::Riak::Object> object that will be stored as JSON.
 
 =method get
+
+    my $obj = $bucket->get($key, [$r]);
 
 Retrieve a JSON-encoded object from Riak
 
 =method n_val
 
+    my $n_val = $bucket->n_val;
+
 Get/set the N-value for this bucket, which is the number of replicas that will be written of each object in the bucket. Set this once before you write any data to the bucket, and never change it again, otherwise unpredictable things could happen. This should only be used if you know what you are doing.
 
 =method allow_multiples
+
+    my $allow_mul = $bucket->allow_multiples;
 
 If set to True, then writes with conflicting data will be stored and returned to the client. This situation can be detected by calling has_siblings() and get_siblings(). This should only be used if you know what you are doing.
 
 =method set_property
 
+    $bucket->set_property({n_val => 2});
+
 Set a bucket property. This should only be used if you know what you are doing.
 
 =method get_property
+
+    my $prop = $bucket->get_property('n_val');
 
 Retrieve a bucket property
 
@@ -191,3 +217,4 @@ Set multiple bucket properties in one call. This should only be used if you know
 =method get_properties
 
 Retrieve an associative array of all bucket properties.
+

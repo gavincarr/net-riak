@@ -253,9 +253,6 @@ sub add_link {
     }
     $self->remove_link($new_link);
     $self->append_link($new_link);
-
-    # warn "on est bien ici ??\n";
-    # use YAML; warn Dump $new_link;
     $self;
 }
 
@@ -312,12 +309,167 @@ sub reduce {
 
 =head1 SYNOPSIS
 
-The L<Net::Riak::Object> holds meta information about a Riak object, plus the object's data.
+    my $obj = $bucket->get('foo');
+
 
 =head1 DESCRIPTION
 
-
+The L<Net::Riak::Object> holds meta information about a Riak object, plus the object's data.
 
 =head2 ATTRIBUTES
 
+=over 4
+
+=item B<key>
+
+    my $key = $obj->key;
+
+Get the key of this object
+
+=item B<client>
+
+=item B<bucket>
+
+=item B<data>
+
+Get or set the data stored in this object.
+
+=item B<r>
+
+=item B<w>
+
+=item B<dw>
+
+=item B<content_type>
+
+=item B<status>
+
+Get the HTTP status from the last operation on this object.
+
+=item B<links>
+
+Get an array of L<Net::Riak::Link> objects
+
+=item B<exists>
+
+Return true if the object exists, false otherwise.
+
+=item B<siblings>
+
+Return an array of Siblings
+
+=back
+
 =head2 METHODS
+
+=method count_links
+
+Return the number of links
+
+=method append_link
+
+Add a new link
+
+=method get_siblings
+
+Return the number of siblings
+
+=method add_sibling
+
+Add a new sibling
+
+=method count_siblings
+
+=method get_sibling
+
+Return a sibling
+
+=method store
+
+    $obj->store($w, $dw);
+
+Store the object in Riak. When this operation completes, the object could contain new metadata and possibly new data if Riak contains a newer version of the object according to the object's vector clock.
+
+=over 2
+
+=item B<w>
+
+W-value, wait for this many partitions to respond before returning to client.
+
+=item B<dw>
+
+DW-value, wait for this many partitions to confirm the write before returning to client.
+
+=back
+
+=method load
+
+    $obj->load($w);
+
+Reload the object from Riak. When this operation completes, the object could contain new metadata and a new value, if the object was updated in Riak since it was last retrieved.
+
+=over 4
+
+=item B<r>
+
+R-Value, wait for this many partitions to respond before returning to client.
+
+=back
+
+=method delete
+
+    $obj->delete($dw);
+
+Delete this object from Riak.
+
+=over 4
+
+=item B<dw>
+
+DW-value. Wait until this many partitions have deleted the object before responding.
+
+=back
+
+=method clear
+
+    $obj->reset;
+
+Reset this object
+
+=method has_siblings
+
+    if ($obj->has_siblings) { ... }
+
+Return true if this object has siblings
+
+=method populate
+
+Given the output of RiakUtils.http_request and a list of statuses, populate the object. Only for use by the Riak client library.
+
+=method add_link
+
+    $obj->add_link($obj2, "tag");
+
+Add a link to a L<Net::Riak::Object>
+
+=method remove_link
+
+    $obj->remove_link($obj2, "tag");
+
+Remove a link to a L<Net::Riak::Object>
+
+=method add
+
+Start assembling a Map/Reduce operation
+
+=method link
+
+Start assembling a Map/Reduce operation
+
+=method map
+
+Start assembling a Map/Reduce operation
+
+=method reduce
+
+Start assembling a Map/Reduce operation

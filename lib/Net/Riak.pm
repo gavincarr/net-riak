@@ -124,20 +124,32 @@ Get the bucket by the specified name. Since buckets always exist, this will alwa
 
 =method is_alive
 
+    if (!$client->is_alive) {
+        ...
+    }
+
 Check if the Riak server for this client is alive
 
 =method add
+
+    my $map_reduce = $client->add('bucket_name', 'key');
 
 Start assembling a Map/Reduce operation
 
 =method link
 
+    my $map_reduce = $client->link();
+
 Start assembling a Map/Reduce operation
 
 =method map
 
+    my $map_reduce = $client->add('bucket_name', 'key')->map("function ...");
+
 Start assembling a Map/Reduce operation
 
 =method reduce
+
+    my $map_reduce = $client->add(..)->map(..)->reduce("function ...");
 
 Start assembling a Map/Reduce operation
