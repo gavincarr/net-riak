@@ -4,16 +4,9 @@ package Net::Riak::Link;
 
 use Moose;
 
-has client => (
-    is       => 'ro',
-    isa      => 'Net::Riak::Client',
-    required => 0,
-);
-has bucket => (
-    is       => 'ro',
-    isa      => 'Net::Riak::Bucket',
-    required => 1,
-);
+with 'Net::Riak::Role::Base' => {classes =>
+      [{name => 'client', required => 0}, {name => 'bucket', required => 1},]};
+
 has key => (
     is      => 'rw',
     isa     => 'Str',

@@ -9,11 +9,9 @@ use Scalar::Util;
 use Net::Riak::LinkPhase;
 use Net::Riak::MapReducePhase;
 
-has client => (
-    is       => 'rw',
-    isa      => 'Net::Riak::Client',
-    required => 1,
-);
+with 'Net::Riak::Role::Base' =>
+  {classes => [{name => 'client', required => 0}]};
+
 has phases => (
     traits     => ['Array'],
     is         => 'rw',
