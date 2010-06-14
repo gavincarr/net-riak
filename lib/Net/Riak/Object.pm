@@ -30,6 +30,7 @@ has links => (
     handles    => {
         count_links => 'elements',
         append_link => 'push',
+        has_links   => 'count',
     },
     clearer => '_clear_links',
 );
@@ -70,7 +71,7 @@ sub store {
         $request->header('X-Riack-Vclock' => $self->vclock);
     }
 
-    if ($self->count_links > 0) {
+    if ($self->has_links) {
         $request->header('link' => $self->_links_to_header);
     }
 
@@ -87,13 +88,8 @@ sub store {
 }
 
 sub _links_to_header {
-    my $self        = shift;
-    my $header_link = '';
-    foreach my $l ($self->links) {
-        $header_link .= ', ' if ($header_link ne '');
-        $header_link .= $l->to_link_header($self->client);
-    }
-    $header_link;
+    my $self = shift;
+    join(', ', map { $_->to_link_header($self->client) } $self->links);
 }
 
 sub load {
