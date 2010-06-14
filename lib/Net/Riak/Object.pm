@@ -8,22 +8,53 @@ use Moose;
 use Scalar::Util;
 use Net::Riak::Link;
 
-has key    => (is => 'rw', isa => 'Str',               required => 1);
-has client => (is => 'rw', isa => 'Net::Riak',         required => 1);
-has bucket => (is => 'rw', isa => 'Net::Riak::Bucket', required => 1);
-has data => (is => 'rw', isa => 'Any', clearer => '_clear_data');
-has r =>
-  (is => 'rw', isa => 'Int', lazy => 1, default => sub { (shift)->client->r });
-has w =>
-  (is => 'rw', isa => 'Int', lazy => 1, default => sub { (shift)->client->w });
+has key => (
+    is       => 'rw',
+    isa      => 'Str',
+    required => 1
+);
+has client => (
+    is       => 'rw',
+    isa      => 'Net::Riak::Client',
+    required => 1
+);
+has bucket => (
+    is       => 'rw',
+    isa      => 'Net::Riak::Bucket',
+    required => 1
+);
+has data => (
+    is      => 'rw',
+    isa     => 'Any',
+    clearer => '_clear_data'
+);
+has r => (
+    is      => 'rw',
+    isa     => 'Int',
+    lazy    => 1,
+    default => sub { (shift)->client->r }
+);
+has w => (
+    is      => 'rw',
+    isa     => 'Int',
+    lazy    => 1,
+    default => sub { (shift)->client->w }
+);
 has dw => (
     is      => 'rw',
     isa     => 'Int',
     lazy    => 1,
     default => sub { (shift)->client->dw }
 );
-has content_type => (is => 'rw', isa => 'Str', default => 'application/json');
-has status       => (is => 'rw', isa => 'Int');
+has content_type => (
+    is      => 'rw',
+    isa     => 'Str',
+    default => 'application/json'
+);
+has status => (
+    is  => 'rw',
+    isa => 'Int'
+);
 has links => (
     traits     => ['Array'],
     is         => 'rw',
@@ -38,13 +69,13 @@ has links => (
     clearer => '_clear_links',
 );
 has exists => (
-    is => 'rw',
-    isa => 'Bool',
+    is      => 'rw',
+    isa     => 'Bool',
     default => 0,
 );
 has vclock => (
-    is => 'rw',
-    isa => 'Str',
+    is        => 'rw',
+    isa       => 'Str',
     predicate => 'has_vclock',
 );
 has siblings => (
@@ -55,14 +86,15 @@ has siblings => (
     lazy       => 1,
     default    => sub { [] },
     handles    => {
-        get_siblings   => 'elements',
-        add_sibling    => 'push',
-        count_siblings => 'count',
-        get_sibling    => 'get',
+        get_siblings    => 'elements',
+        add_sibling     => 'push',
+        count_siblings  => 'count',
+        get_sibling     => 'get',
+        has_siblings    => 'count',
+        has_no_siblings => 'is_empty',
     },
     clearer => '_clear_links',
 );
-
 has _headers => (
     is  => 'rw',
     isa => 'HTTP::Response',
@@ -93,12 +125,9 @@ sub store {
         $request->header('X-Riack-Vclock' => $self->vclock);
     }
 
-    my $header_link = '';
-    foreach my $l ($self->links) {
-        $header_link .= ', ' if ($header_link ne '');
-        $header_link .= $l->to_link_header($self->client);
+    if ($self->count_links > 0) {
+        $request->header('link' => $self->links_to_header);
     }
-    $request->header('link' => $header_link);
 
     if ($self->_jsonize) {
         $request->content(JSON::encode_json($self->data));
@@ -110,6 +139,16 @@ sub store {
     my $response = $self->client->useragent->request($request);
     $self->populate($response, [200, 300]);
     $self;
+}
+
+sub links_to_header {
+    my $self        = shift;
+    my $header_link = '';
+    foreach my $l ($self->links) {
+        $header_link .= ', ' if ($header_link ne '');
+        $header_link .= $l->to_link_header($self->client);
+    }
+    $header_link;
 }
 
 sub load {
@@ -138,6 +177,7 @@ sub delete {
 
     my $response = $self->client->useragent->request($request);
     $self->populate($response, [204, 404]);
+    $self;
 }
 
 sub clear {
@@ -145,11 +185,7 @@ sub clear {
     $self->_clear_data;
     $self->_clear_links;
     $self->exists(0);
-}
-
-sub has_siblings {
-    my $self = shift;
-    $self->get_siblings > 0 ? return 1 : return 0;
+    $self;
 }
 
 sub populate {
@@ -179,7 +215,7 @@ sub populate {
     $self->exists(1);
 
     if ($http_response->header('link')) {
-        $self->populate_links($http_response->header('link'));
+        $self->_populate_links($http_response->header('link'));
     }
 
     if ($status == 300) {
@@ -193,7 +229,7 @@ sub populate {
     }
 }
 
-sub populate_links {
+sub _populate_links {
     my ($self, $links) = @_;
 
     for my $link (split(',', $links)) {
@@ -441,6 +477,12 @@ Reset this object
     if ($obj->has_siblings) { ... }
 
 Return true if this object has siblings
+
+=method has_no_siblings
+
+   if ($obj->has_no_siblings) { ... }
+
+Return true if this object has no siblings
 
 =method populate
 
