@@ -24,15 +24,16 @@ has dw => (
 );
 has content_type => (is => 'rw', isa => 'Str', default => 'application/json');
 has status       => (is => 'rw', isa => 'Int');
-has links        => (
+has links => (
     traits     => ['Array'],
     is         => 'rw',
     isa        => 'ArrayRef[Net::Riak::Link]',
     auto_deref => 1,
+    lazy       => 1,
     default    => sub { [] },
     handles    => {
-        get_links => 'elements',
-        add_links => 'push',
+        count_links => 'elements',
+        append_link => 'push',
     },
     clearer => '_clear_links',
 );
@@ -92,6 +93,13 @@ sub store {
         $request->header('X-Riack-Vclock' => $self->vclock);
     }
 
+    my $header_link = '';
+    foreach my $l ($self->links) {
+        $header_link .= ', ' if ($header_link ne '');
+        $header_link .= $l->to_link_header($self->client);
+    }
+    $request->header('link' => $header_link);
+
     if ($self->_jsonize) {
         $request->content(JSON::encode_json($self->data));
     }
@@ -101,6 +109,7 @@ sub store {
 
     my $response = $self->client->useragent->request($request);
     $self->populate($response, [200, 300]);
+    $self;
 }
 
 sub load {
@@ -114,6 +123,7 @@ sub load {
 
     my $response = $self->client->useragent->request($request);
     $self->populate($response, [200, 300, 404]);
+    $self;
 }
 
 sub delete {
@@ -135,6 +145,11 @@ sub clear {
     $self->_clear_data;
     $self->_clear_links;
     $self->exists(0);
+}
+
+sub has_siblings {
+    my $self = shift;
+    $self->get_siblings > 0 ? return 1 : return 0;
 }
 
 sub populate {
@@ -185,7 +200,17 @@ sub populate_links {
         if ($link
             =~ /\<\/([^\/]+)\/([^\/]+)\/([^\/]+)\>; ?riaktag=\"([^\']+)\"/)
         {
-            my $l = Net::Riak::Link->new($2, $3, $4);
+            my $bucket = $2;
+            my $key    = $3;
+            my $tag    = $4;
+            my $l      = Net::Riak::Link->new(
+                bucket => Net::Riak::Bucket->new(
+                    name   => $bucket,
+                    client => $self->client
+                ),
+                key => $key,
+                tag => $tag
+            );
             $self->add_link($link);
         }
     }
@@ -210,24 +235,28 @@ sub sibling {
     );
     $obj->_jsonize($self->_jsonize);
     $obj->populate($response, [200]);
-    return $obj;
+    $obj;
 }
 
 sub add_link {
     my ($self, $obj, $tag) = @_;
     my $new_link;
-    if (blessed $obj && $obj->isa('RiakLink')) {
+    if (blessed $obj && $obj->isa('Net::Riak::Link')) {
         $new_link = $obj;
     }
     else {
         $new_link = Net::Riak::Link->new(
             bucket => $self->bucket,
             key    => $self->key,
-            tag    => $tag || ''
+            tag    => $tag || $self->bucket->name,
         );
     }
     $self->remove_link($new_link);
-    $self->add_links($new_link);
+    $self->append_link($new_link);
+
+    # warn "on est bien ici ??\n";
+    # use YAML; warn Dump $new_link;
+    $self;
 }
 
 sub remove_link {
