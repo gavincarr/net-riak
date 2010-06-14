@@ -11,7 +11,7 @@ use Net::Riak::MapReducePhase;
 
 has client => (
     is       => 'rw',
-    isa      => 'Net::Riak',
+    isa      => 'Net::Riak::Client',
     required => 1,
 );
 has phases => (

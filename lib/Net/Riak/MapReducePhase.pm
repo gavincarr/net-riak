@@ -27,5 +27,4 @@ sub to_array {
     return {$self->type => $step_def};
 }
 
-
 1;

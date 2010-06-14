@@ -13,7 +13,7 @@ has name => (
 );
 has client => (
     is       => 'ro',
-    isa      => 'Net::Riak',
+    isa      => 'Net::Riak::Client',
     required => 1
 );
 has content_type => (
@@ -21,7 +21,6 @@ has content_type => (
     isa     => 'Str',
     default => 'application/json'
 );
-
 has r => (
     is      => 'rw',
     isa     => 'Int',
@@ -127,7 +126,7 @@ sub new_object {
         key    => $key,
         data   => $data,
         bucket => $self,
-        client => $self->client
+        client => $self->client,
     );
     $object;
 }

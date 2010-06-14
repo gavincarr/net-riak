@@ -6,7 +6,7 @@ use Moose;
 
 has client => (
     is       => 'ro',
-    isa      => 'Net::Riak',
+    isa      => 'Net::Riak::Client',
     required => 0,
 );
 has bucket => (
