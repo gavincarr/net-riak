@@ -12,25 +12,14 @@ with 'Net::Riak::Role::Replica' => {keys => [qw/r w dw/]};
 with 'Net::Riak::Role::Base' => {classes =>
       [{name => 'bucket', required => 1}, {name => 'client', required => 1}]};
 
-has key => (
-    is       => 'rw',
-    isa      => 'Str',
-    required => 1
-);
-has data => (
-    is      => 'rw',
-    isa     => 'Any',
-    clearer => '_clear_data'
-);
-has content_type => (
-    is      => 'rw',
-    isa     => 'Str',
-    default => 'application/json'
-);
-has status => (
-    is  => 'rw',
-    isa => 'Int'
-);
+has key => (is => 'rw', isa => 'Str', required => 1);
+has status       => (is => 'rw', isa => 'Int');
+has exists       => (is => 'rw', isa => 'Bool', default => 0,);
+has data         => (is => 'rw', isa => 'Any', clearer => '_clear_data');
+has vclock       => (is => 'rw', isa => 'Str', predicate => 'has_vclock',);
+has content_type => (is => 'rw', isa => 'Str', default => 'application/json');
+has _headers     => (is => 'rw', isa => 'HTTP::Response',);
+has _jsonize     => (is => 'rw', isa => 'Bool', lazy => 1, default => 1,);
 has links => (
     traits     => ['Array'],
     is         => 'rw',
@@ -43,16 +32,6 @@ has links => (
         append_link => 'push',
     },
     clearer => '_clear_links',
-);
-has exists => (
-    is      => 'rw',
-    isa     => 'Bool',
-    default => 0,
-);
-has vclock => (
-    is        => 'rw',
-    isa       => 'Str',
-    predicate => 'has_vclock',
 );
 has siblings => (
     traits     => ['Array'],
@@ -70,16 +49,6 @@ has siblings => (
         has_no_siblings => 'is_empty',
     },
     clearer => '_clear_links',
-);
-has _headers => (
-    is  => 'rw',
-    isa => 'HTTP::Response',
-);
-has _jsonize => (
-    is      => 'rw',
-    isa     => 'Bool',
-    lazy    => 1,
-    default => 1,
 );
 
 sub store {
