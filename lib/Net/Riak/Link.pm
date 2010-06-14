@@ -24,7 +24,7 @@ has tag => (
     is      => 'rw',
     isa     => 'Str',
     lazy    => 1,
-    default => '_',
+    default => sub {(shift)->bucket->name}
 );
 
 sub to_link_header {
@@ -33,9 +33,9 @@ sub to_link_header {
     my $link = '';
     $link .= '</';
     $link .= $client->prefix . '/';
-    $link .= $self->bucket . '/';
+    $link .= $self->bucket->name . '/';
     $link .= $self->key . '>; riaktag="';
-    $link .= self->tag . '"';
+    $link .= $self->tag . '"';
     return $link;
 }
 
