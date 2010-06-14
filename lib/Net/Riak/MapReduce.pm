@@ -60,6 +60,7 @@ sub add {
     else {
         $self->add_bucket_key_data($arg, @_);
     }
+    $self;
 }
 
 sub add_object {
@@ -108,6 +109,7 @@ sub map {
         arg      => $options{arg} || [],
     );
     $self->add_phase($map_reduce);
+    $self;
 }
 
 sub reduce {
@@ -120,6 +122,7 @@ sub reduce {
         arg      => $options{arg} || [],
     );
     $self->add_phase($map_reduce);
+    $self;
 }
 
 sub run {
@@ -168,7 +171,7 @@ sub run {
     my $a = [];
     foreach (@$result) {
         my $l = Net::Riak::Link->new(
-            bucket => $_->[0],
+            bucket => Net::Riak::Bucket->new(name => $_->[0], client => $self->client),
             key    => $_->[1],
             tag    => $_->[2],
             client => $self->client
