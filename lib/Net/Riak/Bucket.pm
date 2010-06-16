@@ -42,6 +42,11 @@ sub allow_multiples {
     }
 }
 
+sub get_keys {
+    my $self = shift;
+    $self->get_property('keys', {keys => 'true', props => 'false'});
+}
+
 sub get {
     my ($self, $key, $r) = @_;
     my $obj = Net::Riak::Object->new(
@@ -60,15 +65,16 @@ sub set_property {
 }
 
 sub get_property {
-    my ($self, $key) = @_;
-    my $props = $self->get_properties;
+    my ($self, $key, $params) = @_;
+    my $props = $self->get_properties($params);
     return $props->{$key};
 }
 
 sub get_properties {
-    my $self = shift;
+    my ($self, $params)  = @_;
 
-    my $params = {props => 'True', keys => 'False'};
+    $params->{props} = 'true'  unless exists $params->{props};
+    $params->{keys}  = 'false' unless exists $params->{keys};
 
     my $request =
       $self->client->request('GET', [$self->client->prefix, $self->name],
@@ -79,7 +85,6 @@ sub get_properties {
     my $props = {};
     if ($response->is_success) {
         $props = JSON::decode_json($response->content);
-        $props = $props->{props};
     }
     return $props;
 }
@@ -182,6 +187,12 @@ Get/set the N-value for this bucket, which is the number of replicas that will b
 
 If set to True, then writes with conflicting data will be stored and returned to the client. This situation can be detected by calling has_siblings() and get_siblings(). This should only be used if you know what you are doing.
 
+=method get_keys
+
+    my $keys = $bucket->get_keys;
+
+Return the list of keys for a bucket
+
 =method set_property
 
     $bucket->set_property({n_val => 2});
@@ -192,7 +203,7 @@ Set a bucket property. This should only be used if you know what you are doing.
 
     my $prop = $bucket->get_property('n_val');
 
-Retrieve a bucket property
+Retrieve a bucket property.
 
 =method set_properties
 
@@ -200,5 +211,7 @@ Set multiple bucket properties in one call. This should only be used if you know
 
 =method get_properties
 
-Retrieve an associative array of all bucket properties.
+Retrieve an associative array of all bucket properties. By default, 'props' is set to true and 'keys' to false. You can change this default:
+
+    my $properties = $bucket->get_properties({keys=>'true'});
 
