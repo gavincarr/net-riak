@@ -48,7 +48,31 @@ sub bucket {
 
 =item B<host>
 
-Hostname or IP address (default 'http://127.0.0.1:8098')
+URL of the node (default 'http://127.0.0.1:8098'). If your ring is composed with more than one node, you can configure the client to hit more than one host, instead of hitting always the same node. For this, you can do one of the following:
+
+=over 4
+
+=item B<all nodes equals>
+
+    my $riak = Net::Riak->new(
+        host => [
+            'http://10.0.0.40:8098',
+            'http://10.0.0.41:8098'
+        ]
+    );
+
+=item B<give weight to nodes>
+
+    my $riak = Net::Riak->new(
+        host => [
+            {node => 'http://10.0.0.40:8098', weight => '0.2'},
+            {node => 'http://10.0.0.41:8098', weight => '0.8'}
+        ]
+    );
+
+=back
+
+Now, when a request is made, a node is picked at random, according to weight.
 
 =item B<prefix>
 

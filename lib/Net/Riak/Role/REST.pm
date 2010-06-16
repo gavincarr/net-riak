@@ -14,7 +14,7 @@ sub _build_path {
 sub _build_uri {
     my ($self, $path, $params) = @_;
 
-    my $uri = URI->new($self->host);
+    my $uri = URI->new($self->get_host);
     $uri->path($self->_build_path($path));
     $uri->query_form(%$params);
     $uri;
