@@ -25,7 +25,7 @@ has host => (
     is      => 'rw',
     isa     => 'RiakHost',
     coerce  => 1,
-    default => sub {'http://127.0.0.1:8098'}
+    default => 'http://127.0.0.1:8098',
 );
 
 sub get_host {
