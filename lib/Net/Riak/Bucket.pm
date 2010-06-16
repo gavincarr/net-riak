@@ -44,7 +44,8 @@ sub allow_multiples {
 
 sub get_keys {
     my $self = shift;
-    $self->get_property('keys', {keys => 'true', props => 'false'});
+    my $properties = $self->get_properties({keys => 'true', props => 'false'});
+    return $properties->{keys};
 }
 
 sub get {
@@ -67,11 +68,11 @@ sub set_property {
 sub get_property {
     my ($self, $key, $params) = @_;
     my $props = $self->get_properties($params);
-    return $props->{$key};
+    return $props->{props}->{$key};
 }
 
 sub get_properties {
-    my ($self, $params)  = @_;
+    my ($self, $params) = @_;
 
     $params->{props} = 'true'  unless exists $params->{props};
     $params->{keys}  = 'false' unless exists $params->{keys};
