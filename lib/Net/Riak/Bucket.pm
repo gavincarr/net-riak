@@ -4,6 +4,7 @@ package Net::Riak::Bucket;
 
 use JSON;
 use Moose;
+use Carp;
 use Net::Riak::Object;
 
 with 'Net::Riak::Role::Replica' => {keys => [qw/r w dw/]};
@@ -33,9 +34,10 @@ sub n_val {
 
 sub allow_multiples {
     my $self = shift;
-    # XXX use JSON::false / true ?
+
     if (my $val = shift) {
-        $self->set_property('allow_mult', $val);
+        my $bool = ($val == 1 ? JSON::true : JSON::false);
+        $self->set_property('allow_mult', $bool);
     }
     else {
         return $self->get_property('allow_mult');
@@ -98,12 +100,8 @@ sub set_properties {
     $request->content(JSON::encode_json({props => $props}));
     my $response = $self->client->useragent->request($request);
 
-    if (!$response->is_success) {
-        # XXX
-    }
-
-    if ($response->code != 204) {
-        # XXX
+    if (!$response->is_success || $response->code != 204) {
+        croak "Error setting bucket properties.";
     }
 }
 
@@ -184,7 +182,7 @@ Get/set the N-value for this bucket, which is the number of replicas that will b
 
 =method allow_multiples
 
-    my $allow_mul = $bucket->allow_multiples;
+    $bucket->allow_multiples(1|0);
 
 If set to True, then writes with conflicting data will be stored and returned to the client. This situation can be detected by calling has_siblings() and get_siblings(). This should only be used if you know what you are doing.
 
