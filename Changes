@@ -1,12 +1,19 @@
-0.03 Mon 14 Jun 2010 05:58:48 PM CEST  
+0.04 Wed June 16 2010
+    - add get_keys to bucket to get the list of existing keys in a
+      bucket
+    - add map/reduce examples
+    - accept multiple hosts
+    - use json::{false,true} in allow_mult
+
+0.03 Mon 14 Jun 2010 05:58:48 PM CEST
     - add roles to generate attributes (mx::r::parameterized)
 
-0.02 Mon 14 Jun 2010 03:48:43 PM CEST  
+0.02 Mon 14 Jun 2010 03:48:43 PM CEST
     - links_to_header is now private
     - add some handles
     - client is moved to a class
     - client is now a N::R::Client
     - add tests for bucket, client, object, links
 
-0.01 Mon 14 Jun 2010 01:08:52 PM CEST  
+0.01 Mon 14 Jun 2010 01:08:52 PM CEST
     - initial release (port of the python client)
