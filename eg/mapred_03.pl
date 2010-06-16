@@ -6,9 +6,8 @@ use 5.010;
 use Net::Riak;
 
 my $riak = Net::Riak->new();
-my $result;
 
-$result =
+my $result =
   $riak->add('goog')->map(map_max_daily_variance())
   ->reduce(reduce_max_daily_variance())->run;
 say "max daily variance";

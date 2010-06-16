@@ -7,9 +7,8 @@ use YAML;
 use Net::Riak;
 
 my $riak = Net::Riak->new();
-my $result;
 
-$result = $riak->add('goog')->map(days_where_close_is_lower_than_open())->run;
+my $result = $riak->add('goog')->map(days_where_close_is_lower_than_open())->run;
 say "days where close is lower than open";
 map { say $_ } sort {$a cmp $b} @$result;
 
