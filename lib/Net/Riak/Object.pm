@@ -68,7 +68,7 @@ sub store {
     $request->header('Content-Type'    => $self->content_type);
 
     if ($self->has_vclock) {
-        $request->header('X-Riack-Vclock' => $self->vclock);
+        $request->header('X-Riak-Vclock' => $self->vclock);
     }
 
     if ($self->has_links) {
@@ -167,6 +167,7 @@ sub populate {
 
     if ($status == 200 && $self->_jsonize) {
         $self->data(JSON::decode_json($self->data));
+        $self->vclock($http_response->header('X-Riak-Vclock'));
     }
 }
 
