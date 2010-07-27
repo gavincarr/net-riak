@@ -1,3 +1,6 @@
+0.05 Wed 30 Jun 2010 10:54:52 AM CEST
+    - fix vlock
+
 0.04 Wed June 16 2010
     - add get_keys to bucket to get the list of existing keys in a
       bucket
