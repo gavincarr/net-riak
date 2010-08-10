@@ -189,7 +189,7 @@ sub _populate_links {
                 key => $key,
                 tag => $tag
             );
-            $self->add_link($link);
+            $self->add_link($l);
         }
     }
 }
