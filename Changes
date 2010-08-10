@@ -1,3 +1,6 @@
+0.07 Tue 10 Aug 2010 10:32:32 AM CEST
+    - test shouldn't be run by user
+
 0.06 Tue 10 Aug 2010 10:18:59 AM CEST
     - fix bug in links retriving (thanks to Al Tobey)
 
