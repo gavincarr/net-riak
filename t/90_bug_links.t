@@ -1,6 +1,14 @@
 use Data::Dumper;
 use Net::Riak;
-use Test::More tests => 9;
+use Test::More;
+
+BEGIN {
+    unless ( $ENV{RELEASE_TESTING} ) {
+        require Test::More;
+        Test::More::plan(
+            skip_all => 'these tests are for release candidate testing' );
+    }
+}
 
 ok my $client = Net::Riak->new(host => 'http://127.0.0.1:8098'), 'client created';
 
@@ -50,3 +58,5 @@ my $test_links = $bucket_two->get('25FCBA57-8D75-41B6-9E5A-0E2528BB3342', [1]);
 my $links = $test_links->links;
 is $links->[0]->key, 'griffinp', 'good owner for first link';
 is $links->[1]->key, 'griffins', 'good owner for second link';
+
+done_testing;
