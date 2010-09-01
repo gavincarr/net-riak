@@ -166,6 +166,8 @@ sub populate {
     }
 
     if ($status == 200) {
+        $self->content_type($http_response->content_type)
+            if $http_response->content_type;
         $self->data(JSON::decode_json($self->data))
             if $self->content_type eq 'application/json';
         $self->vclock($http_response->header('X-Riak-Vclock'));
