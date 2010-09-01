@@ -165,15 +165,15 @@ DW value setting for this client (default 2)
 
 =method new_object
 
-    my $obj = $bucket->new_object($key, $data);
+    my $obj = $bucket->new_object($key, $data, @args);
 
-Create a new L<Net::Riak::Object> object that will be stored as JSON.
+Create a new L<Net::Riak::Object> object. Additional Object constructor arguments can be passed after $data. If $data is a reference and no explicit Object content_type is given in @args, the data will be serialised and stored as JSON.
 
 =method get
 
     my $obj = $bucket->get($key, [$r]);
 
-Retrieve a JSON-encoded object from Riak
+Retrieve an object from Riak.
 
 =method n_val
 
@@ -191,7 +191,7 @@ If set to True, then writes with conflicting data will be stored and returned to
 
     my $keys = $bucket->get_keys;
 
-Return the list of keys for a bucket
+Return an arrayref of the list of keys for a bucket.
 
 =method set_property
 
