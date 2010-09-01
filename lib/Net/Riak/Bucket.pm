@@ -106,12 +106,13 @@ sub set_properties {
 }
 
 sub new_object {
-    my ($self, $key, $data) = @_;
+    my ($self, $key, $data, @args) = @_;
     my $object = Net::Riak::Object->new(
         key    => $key,
         data   => $data,
         bucket => $self,
         client => $self->client,
+        @args,
     );
     $object;
 }
