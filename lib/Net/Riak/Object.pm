@@ -75,7 +75,7 @@ sub store {
         $request->header('link' => $self->_links_to_header);
     }
 
-    if ($self->_jsonize) {
+    if (ref $self->data && $self->content_type eq 'application/json') {
         $request->content(JSON::encode_json($self->data));
     }
     else {
@@ -165,8 +165,9 @@ sub populate {
         $self->siblings(\@siblings);
     }
 
-    if ($status == 200 && $self->_jsonize) {
-        $self->data(JSON::decode_json($self->data));
+    if ($status == 200) {
+        $self->data(JSON::decode_json($self->data))
+            if $self->content_type eq 'application/json';
         $self->vclock($http_response->header('X-Riak-Vclock'));
     }
 }
