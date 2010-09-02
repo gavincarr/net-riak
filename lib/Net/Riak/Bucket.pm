@@ -85,11 +85,11 @@ sub get_properties {
 
     my $response = $self->client->useragent->request($request);
 
-    my $props = {};
-    if ($response->is_success) {
-        $props = JSON::decode_json($response->content);
+    if (!$response->is_success) {
+        die "Error getting bucket properties: " . $response->status_line . "\n";
     }
-    return $props;
+
+    return JSON::decode_json($response->content);
 }
 
 sub set_properties {
