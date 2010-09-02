@@ -100,8 +100,8 @@ sub set_properties {
     $request->content(JSON::encode_json({props => $props}));
     my $response = $self->client->useragent->request($request);
 
-    if (!$response->is_success || $response->code != 204) {
-        croak "Error setting bucket properties.";
+    if (!$response->is_success) {
+        die "Error setting bucket properties: " . $response->status_line . "\n";
     }
 }
 
