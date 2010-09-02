@@ -11,6 +11,13 @@ has useragent => (
     lazy => 1,
     default => sub {
         my $self = shift;
+
+        # The Links header Riak returns (esp. for buckets) can get really long,
+        # so here increase the MaxLineLength LWP will accept (default = 8192)
+        my %opts = @LWP::Protocol::http::EXTRA_SOCK_OPTS;
+        $opts{MaxLineLength} = 65_536;
+        @LWP::Protocol::http::EXTRA_SOCK_OPTS = %opts;
+
         my $ua = LWP::UserAgent->new;
         $ua->timeout(3);
         $ua;
