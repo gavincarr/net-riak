@@ -1,3 +1,8 @@
+0.08 Mon 06 Sep 2010 10:52:15 AM CEST  
+    - allow to store non-json object (Gavin Carr)
+    - increase LWP's MaxLineLength (Gavin Carr)
+    - better error reporting in Buckets (Gavin Carr)
+
 0.07 Tue 10 Aug 2010 10:32:32 AM CEST
     - test shouldn't be run by user
 
