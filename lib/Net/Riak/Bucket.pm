@@ -45,8 +45,10 @@ sub allow_multiples {
 }
 
 sub get_keys {
-    my $self = shift;
-    my $properties = $self->get_properties({keys => 'true', props => 'false'});
+    my ($self, $params) = @_;
+    $params ||= {};
+    my $key_mode = $params->{stream} ? 'stream' : 'true';
+    my $properties = $self->get_properties({keys => $key_mode, props => 'false'});
     return $properties->{keys};
 }
 
