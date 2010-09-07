@@ -89,7 +89,18 @@ sub get_properties {
         die "Error getting bucket properties: " . $response->status_line . "\n";
     }
 
-    return JSON::decode_json($response->content);
+    if ($params->{keys} ne 'stream') {
+        return JSON::decode_json($response->content);
+    }
+
+    # In streaming mode, aggregate keys from the multiple returned chunk objects
+    else {
+        my $json = JSON->new;
+        my $props = $json->incr_parse($response->content);
+        my @keys = map { $_->{keys} && ref $_->{keys} eq 'ARRAY' ? @{$_->{keys}} : () }
+            $json->incr_parse;
+        return { props => $props, keys => \@keys };
+    }
 }
 
 sub set_properties {
