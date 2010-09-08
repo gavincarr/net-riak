@@ -136,9 +136,13 @@ sub new_object {
 
     my $client = Net::Riak->new(...);
     my $bucket = $client->bucket('foo');
-    my $object = $bucket->new_object('foo', {...});
+
+    # retrieve an existing object
+    my $obj1 = $bucket->get('foo');
+
+    # create/store a new object
+    my $obj2 = $bucket->new_object('foo2', {...});
     $object->store;
-    $object->get('foo2');
 
 =head1 DESCRIPTION
 
@@ -203,8 +207,17 @@ If set to True, then writes with conflicting data will be stored and returned to
 =method get_keys
 
     my $keys = $bucket->get_keys;
+    my $keys = $bucket->get_keys($args);
 
-Return an arrayref of the list of keys for a bucket.
+Return an arrayref of the list of keys for a bucket. Optionally takes a hashref of named parameters. Supported parameters are:
+
+=over 4
+
+=item stream => 1
+
+Use 'keys=stream' streaming mode to fetch the list of keys, which may be faster for large keyspaces.
+
+=back
 
 =method set_property
 
@@ -224,7 +237,12 @@ Set multiple bucket properties in one call. This should only be used if you know
 
 =method get_properties
 
-Retrieve an associative array of all bucket properties. By default, 'props' is set to true and 'keys' to false. You can change this default:
+Retrieve an associative array of all bucket properties, containing 'props' and 'keys' elements. 
 
-    my $properties = $bucket->get_properties({keys=>'true'});
+Accepts a hashref of parameters, containing flags for 'props' and 'keys'. By default, 'props' is set to true and 'keys' to false. You can change this default:
 
+    my $properties = $bucket->get_properties({props=>'false',keys=>'true'});
+
+The 'props' parameter may be 'true' or 'false'. The 'keys' parameter may be 'false' or 'true' or 'stream', to get the keys back in streaming mode (which may be faster for large keyspaces).
+
+=cut
