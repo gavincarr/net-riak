@@ -102,13 +102,15 @@ client_id for this client
 
 =head2 METHODS
 
-=method bucket
+=over 4
+
+=item bucket
 
     my $bucket = $client->bucket($name);
 
 Get the bucket by the specified name. Since buckets always exist, this will always return a L<Net::Riak::Bucket>
 
-=method is_alive
+=item is_alive
 
     if (!$client->is_alive) {
         ...
@@ -116,26 +118,31 @@ Get the bucket by the specified name. Since buckets always exist, this will alwa
 
 Check if the Riak server for this client is alive
 
-=method add
+=item add
 
     my $map_reduce = $client->add('bucket_name', 'key');
 
 Start assembling a Map/Reduce operation
 
-=method link
+=item link
 
     my $map_reduce = $client->link();
 
 Start assembling a Map/Reduce operation
 
-=method map
+=item map
 
     my $map_reduce = $client->add('bucket_name', 'key')->map("function ...");
 
 Start assembling a Map/Reduce operation
 
-=method reduce
+=item reduce
 
     my $map_reduce = $client->add(..)->map(..)->reduce("function ...");
 
 Start assembling a Map/Reduce operation
+
+=back
+
+=cut
+

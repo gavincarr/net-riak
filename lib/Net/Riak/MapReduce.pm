@@ -201,20 +201,27 @@ sub run {
 
 =head2 METHODS
 
-=method add
+=over 4
+
+=item add
 
 Add inputs to a map/reduce operation. This method takes three different forms, depending on the provided inputs. You can specify either a RiakObject, a string bucket name, or a bucket, key, and additional arg.
 
-=method add_object
+=item add_object
 
-=method add_bucket_key_data
+=item add_bucket_key_data
 
-=method add_bucket
+=item add_bucket
 
-=method link
+=item link
 
-=method map
+=item map
 
-=method reduce
+=item reduce
 
-=method run
+=item run
+
+=back
+
+=cut
+

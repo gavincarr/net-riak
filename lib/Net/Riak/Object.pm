@@ -343,29 +343,31 @@ Return an array of Siblings
 
 =head2 METHODS
 
-=method count_links
+=over 4
+
+=item count_links
 
 Return the number of links
 
-=method append_link
+=item append_link
 
 Add a new link
 
-=method get_siblings
+=item get_siblings
 
 Return the number of siblings
 
-=method add_sibling
+=item add_sibling
 
 Add a new sibling
 
-=method count_siblings
+=item count_siblings
 
-=method get_sibling
+=item get_sibling
 
 Return a sibling
 
-=method store
+=item store
 
     $obj->store($w, $dw);
 
@@ -383,7 +385,7 @@ DW-value, wait for this many partitions to confirm the write before returning to
 
 =back
 
-=method load
+=item load
 
     $obj->load($w);
 
@@ -397,7 +399,7 @@ R-Value, wait for this many partitions to respond before returning to client.
 
 =back
 
-=method delete
+=item delete
 
     $obj->delete($dw);
 
@@ -411,52 +413,56 @@ DW-value. Wait until this many partitions have deleted the object before respond
 
 =back
 
-=method clear
+=item clear
 
     $obj->reset;
 
 Reset this object
 
-=method has_siblings
+=item has_siblings
 
     if ($obj->has_siblings) { ... }
 
 Return true if this object has siblings
 
-=method has_no_siblings
+=item has_no_siblings
 
    if ($obj->has_no_siblings) { ... }
 
 Return true if this object has no siblings
 
-=method populate
+=item populate
 
 Given the output of RiakUtils.http_request and a list of statuses, populate the object. Only for use by the Riak client library.
 
-=method add_link
+=item add_link
 
     $obj->add_link($obj2, "tag");
 
 Add a link to a L<Net::Riak::Object>
 
-=method remove_link
+=item remove_link
 
     $obj->remove_link($obj2, "tag");
 
 Remove a link to a L<Net::Riak::Object>
 
-=method add
+=item add
 
 Start assembling a Map/Reduce operation
 
-=method link
+=item link
 
 Start assembling a Map/Reduce operation
 
-=method map
+=item map
 
 Start assembling a Map/Reduce operation
 
-=method reduce
+=item reduce
 
 Start assembling a Map/Reduce operation
+
+=back
+
+=cut
