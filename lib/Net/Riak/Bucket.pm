@@ -46,9 +46,9 @@ sub allow_multiples {
 
 sub get_keys {
     my ($self, $params) = @_;
-    $params ||= {};
-    my $key_mode = $params->{stream} ? 'stream' : 'true';
-    my $properties = $self->get_properties({keys => $key_mode, props => 'false'});
+    my $key_mode = delete($params->{stream}) ? 'stream' : 'true';
+    $params = { props => 'false', keys => $key_mode, %$params };
+    my $properties = $self->get_properties($params);
     return $properties->{keys};
 }
 
@@ -78,6 +78,9 @@ sub get_property {
 sub get_properties {
     my ($self, $params) = @_;
 
+    # Callbacks require stream mode
+    $params->{keys}  = 'stream' if $params->{cb};
+
     $params->{props} = 'true'  unless exists $params->{props};
     $params->{keys}  = 'false' unless exists $params->{keys};
 
@@ -99,9 +102,17 @@ sub get_properties {
     else {
         my $json = JSON->new;
         my $props = $json->incr_parse($response->content);
-        my @keys = map { $_->{keys} && ref $_->{keys} eq 'ARRAY' ? @{$_->{keys}} : () }
-            $json->incr_parse;
-        return { props => $props, keys => \@keys };
+        if ($params->{cb}) {
+            while (defined(my $obj = $json->incr_parse)) {
+                $params->{cb}->($_) foreach @{$obj->{keys}};
+            }
+            return %$props ? { props => $props } : {};
+        }
+        else {
+            my @keys = map { $_->{keys} && ref $_->{keys} eq 'ARRAY' ? @{$_->{keys}} : () }
+                $json->incr_parse;
+            return { props => $props, keys => \@keys };
+        }
     }
 }
 
@@ -217,7 +228,11 @@ Return an arrayref of the list of keys for a bucket. Optionally takes a hashref 
 
 =item stream => 1
 
-Use 'keys=stream' streaming mode to fetch the list of keys, which may be faster for large keyspaces.
+Uses key streaming mode to fetch the list of keys, which may be faster for large keyspaces.
+
+=item cb => sub { }
+
+A callback subroutine to be called for each key found (passed in as the only parameter). get_keys() returns nothing in callback mode.
 
 =back
 
@@ -241,11 +256,21 @@ Set multiple bucket properties in one call. This should only be used if you know
 
 Retrieve an associative array of all bucket properties, containing 'props' and 'keys' elements. 
 
-Accepts a hashref of parameters, containing flags for 'props' and 'keys'. By default, 'props' is set to true and 'keys' to false. You can change this default:
+Accepts a hashref of parameters. Supported parameters are:
 
-    my $properties = $bucket->get_properties({props=>'false',keys=>'true'});
+=over 4
 
-The 'props' parameter may be 'true' or 'false'. The 'keys' parameter may be 'false' or 'true' or 'stream', to get the keys back in streaming mode (which may be faster for large keyspaces).
+=item props => 'true'|'false'
+
+Whether to return bucket properties. Defaults to 'true' if no parameters are given.
+
+=item keys => 'true'|'false'|'stream'
+
+Whether to return bucket keys. If set to 'stream', uses key streaming mode, which may be faster for large keyspaces.
+
+=item cb => sub { }
+
+A callback subroutine to be called for each key found (passed in as the only parameter). Implies keys => 'stream'. Keys are omitted from the results hashref in callback mode.
 
 =back
 
