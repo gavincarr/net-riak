@@ -6,9 +6,9 @@ use Moose::Role;
 use LWP::UserAgent;
 
 has useragent => (
-    is => 'rw',
-    isa => 'LWP::UserAgent',
-    lazy => 1,
+    is      => 'rw',
+    isa     => 'LWP::UserAgent',
+    lazy    => 1,
     default => sub {
         my $self = shift;
 
@@ -19,7 +19,6 @@ has useragent => (
         @LWP::Protocol::http::EXTRA_SOCK_OPTS = %opts;
 
         my $ua = LWP::UserAgent->new;
-        $ua->timeout(3);
         $ua;
     }
 );
