@@ -1,3 +1,11 @@
+0.09 Tue 05 Oct 2010 12:03:59 PM CEST  
+    - typo
+    - when executing a map/reduce, if the timeout of the map/reduce is higher
+      than the value for the useragent's timeout, change for this query the
+      value of the useragent timeout to be the same as the one for the job.
+    - add key callbacks to Bucket get_properties/get_keys stream mode 
+      (Gavin Carr)
+
 0.08 Mon 06 Sep 2010 10:52:15 AM CEST  
     - allow to store non-json object (Gavin Carr)
     - increase LWP's MaxLineLength (Gavin Carr)
