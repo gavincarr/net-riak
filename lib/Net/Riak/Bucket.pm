@@ -254,7 +254,7 @@ Set multiple bucket properties in one call. This should only be used if you know
 
 =item get_properties
 
-Retrieve an associative array of all bucket properties, containing 'props' and 'keys' elements. 
+Retrieve an associative array of all bucket properties, containing 'props' and 'keys' elements.
 
 Accepts a hashref of parameters. Supported parameters are:
 
@@ -274,4 +274,4 @@ A callback subroutine to be called for each key found (passed in as the only par
 
 =back
 
-=cut
+=back
