@@ -20,7 +20,7 @@ sub link {
 sub map {
     my ($self, @args) = @_;
     my $mr = Net::Riak::MapReduce->new(client => $self->client);
-    $mr->mapd(@args);
+    $mr->map(@args);
     $mr;
 }
 
