@@ -83,7 +83,7 @@ sub store {
     }
 
     my $response = $self->client->useragent->request($request);
-    $self->populate($response, [200, 300]);
+    $self->populate($response, [200, 204, 300]);
     $self;
 }
 
